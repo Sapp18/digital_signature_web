@@ -1,20 +1,20 @@
 import 'package:fluro/fluro.dart';
+import 'package:pca_web/view/prueba.dart';
 import 'package:pca_web/view/views.dart';
 
 class DigitalSignatureHandlers {
   static Handler user = Handler(handlerFunc: (context, params) {
-    return const DigitalSignatureView();
+    print(params);
 
-    // final authProvider = Provider.of<AuthProvider>(context!);
-    // if (authProvider.authStatus == AuthStatus.authenticated) {
-    //   print(params);
-    //   if (params['uid']?.first != null) {
-    //     return UserView(uid: params['uid']!.first);
-    //   } else {
-    //     return UsersView();
-    //   }
-    // } else {
-    //   return const PageNotFoundView();
-    // }
+    print(params['uid']?.first);
+    if (params['uid']?.first != null) {
+      if (params['uid']?.first == ':uid') {
+        return PruebaPage();
+      } else {
+        return DigitalSignatureView();
+      }
+    } else {
+      return PruebaPage();
+    }
   });
 }

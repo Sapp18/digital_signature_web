@@ -4,7 +4,11 @@ import 'package:pca_web/services/services.dart';
 import 'package:pca_web/tools/tools.dart';
 import 'package:pca_web/view/views.dart';
 
-void main() => runApp(const MyApp());
+void main() {
+  Flurorouter.configureRoutes();
+
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -12,12 +16,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      initialRoute: Flurorouter.rootRoute,
+      initialRoute: Flurorouter.digitalSignatureRoute,
       navigatorKey: NavigationService.navigatorKey,
       onGenerateRoute: Flurorouter.router.generator,
       scaffoldMessengerKey: NotificationsService.messengerKey,
       title: webName,
-      builder: (_, child) => DigitalSignatureView(),
       theme: ThemeData.dark(),
     );
   }

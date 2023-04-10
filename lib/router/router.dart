@@ -5,10 +5,9 @@ import 'package:pca_web/router/digital_signature_handlers.dart';
 class Flurorouter {
   static final FluroRouter router = FluroRouter();
 
-  static String rootRoute = '/';
   // Signature Router
-  static String digitalSignatureRoute = '/signature/users/:token';
-
+  static String digitalSignatureRoute = '/stock/:uid/contract/:token';
+// http://localhost:36361/#/stock/3/contract/1d73f8263cf7aa68957fe9048293784f
   static void configureRoutes() {
     // Signature
     router.define(

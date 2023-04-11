@@ -6,8 +6,9 @@ class Flurorouter {
   static final FluroRouter router = FluroRouter();
 
   // Signature Router
-  static String digitalSignatureRoute = '/stock/:uid/contract/:token';
+  static String digitalSignatureRoute = '/stock/:stock_id/contract/:key';
 // http://localhost:36361/#/stock/3/contract/1d73f8263cf7aa68957fe9048293784f
+// https://iqstart.com/stock/:stock_id/contract/:key
   static void configureRoutes() {
     // Signature
     router.define(

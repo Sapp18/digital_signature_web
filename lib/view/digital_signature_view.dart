@@ -9,7 +9,13 @@ import 'package:pca_web/tools/tools.dart';
 import 'package:pca_web/widgets/widgets.dart';
 
 class DigitalSignatureView extends StatelessWidget {
-  const DigitalSignatureView({Key? key}) : super(key: key);
+  final String stockId;
+  final String token;
+  const DigitalSignatureView({
+    Key? key,
+    required this.stockId,
+    required this.token,
+  }) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return MultiProvider(

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:url_strategy/url_strategy.dart';
 import 'package:pca_web/router/router.dart';
 import 'package:pca_web/services/services.dart';
 import 'package:pca_web/tools/tools.dart';
-import 'package:pca_web/view/views.dart';
 
 void main() {
   Flurorouter.configureRoutes();
-
+  setPathUrlStrategy();
   runApp(const MyApp());
 }
 

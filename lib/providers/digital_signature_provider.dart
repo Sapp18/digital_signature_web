@@ -1,9 +1,16 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:pca_web/tools/tools.dart';
 import 'package:signature/signature.dart';
 
 class DigitalSignatureProvider extends ChangeNotifier {
+  DigitalSignatureProvider(BuildContext context) {
+    ShowDialogs.digitalSignatureDisplayDialog(
+      context,
+    );
+  }
+
   bool _isLoading = false;
   bool _isSigned = false;
   Uint8List? showSigned;

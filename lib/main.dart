@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:url_strategy/url_strategy.dart';
+// import 'package:flutter_web_plugins/flutter_web_plugins.dart';
+// import 'package:url_strategy/url_strategy.dart';
 import 'package:pca_web/router/router.dart';
 import 'package:pca_web/services/services.dart';
 import 'package:pca_web/tools/tools.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   Flurorouter.configureRoutes();
-  setPathUrlStrategy();
+  // setPathUrlStrategy();
+  // setUrlStrategy(PathUrlStrategy());
+  final prefs = UserPreference();
+  await prefs.initPrefs();
   runApp(const MyApp());
 }
 
@@ -21,7 +26,7 @@ class MyApp extends StatelessWidget {
       onGenerateRoute: Flurorouter.router.generator,
       scaffoldMessengerKey: NotificationsService.messengerKey,
       title: webName,
-      theme: ThemeData.dark(),
+      theme: ThemeData.light(),
     );
   }
 }

@@ -3,7 +3,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:signature/signature.dart';
+import 'package:pca_web/api/apis.dart';
 import 'package:pca_web/providers/providers.dart';
+import 'package:pca_web/router/router.dart';
+import 'package:pca_web/services/services.dart';
 import 'package:pca_web/theme/my_colors.dart';
 import 'package:pca_web/tools/tools.dart';
 import 'package:pca_web/widgets/widgets.dart';
@@ -20,15 +23,23 @@ class DigitalSignatureView extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => DigitalSignatureProvider()),
+        ChangeNotifierProvider(
+          create: (_) => DigitalSignatureProvider(context),
+        ),
       ],
-      child: const _DigitalSignatureView(),
+      child: _DigitalSignatureView(stockId: stockId, token: token),
     );
   }
 }
 
 class _DigitalSignatureView extends StatelessWidget {
-  const _DigitalSignatureView();
+  final String stockId;
+  final String token;
+  const _DigitalSignatureView({
+    Key? key,
+    required this.stockId,
+    required this.token,
+  }) : super(key: key);
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<DigitalSignatureProvider>(context);
@@ -61,7 +72,11 @@ class _DigitalSignatureView extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
             ),
             child: !provider.isLoading && provider.isSigned
-                ? _SeeSignature(provider: provider)
+                ? _SeeSignature(
+                    provider: provider,
+                    stockId: stockId,
+                    token: token,
+                  )
                 : !provider.isLoading && !provider.isSigned
                     ? _Sign(provider: provider)
                     : const _LoadingSignature(),
@@ -88,6 +103,7 @@ class _LoadingSignature extends StatelessWidget {
           'Cargando',
           style: TextStyle(
             fontFamily: fontFamily,
+            fontWeight: FontWeight.w500,
           ),
         ),
       ],
@@ -121,21 +137,24 @@ class _Sign extends StatelessWidget {
               borderRadius: 16,
               buttonColor: MyColors.secondary,
               onPressed: () => provider.controller.clear(),
-              child: Row(
-                children: [
-                  const Text(
-                    'Intentar de nuevo',
-                    style: TextStyle(
-                      color: Color(0XFF00344C),
-                      fontFamily: fontFamily,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5),
+                child: Row(
+                  children: [
+                    const Text(
+                      'Intentar de nuevo',
+                      style: TextStyle(
+                        color: Color(0XFF00344C),
+                        fontFamily: fontFamily,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 11),
-                  SvgPicture.asset(
-                    IconsSvgRoutes.reload,
-                    color: Color(0XFF00344C),
-                  ),
-                ],
+                    const SizedBox(width: 11),
+                    SvgPicture.asset(
+                      IconsSvgRoutes.reload,
+                      color: Color(0XFF00344C),
+                    ),
+                  ],
+                ),
               ),
             ),
             MainButtonWidget(
@@ -147,25 +166,36 @@ class _Sign extends StatelessWidget {
                       provider.showSigned = await provider.exportSignature(
                         bckColor: Colors.white,
                       );
-                      provider.signature = await provider.exportSignature();
+                      provider.signature = await provider.exportSignature(
+                        bckColor: Colors.white,
+                      );
                       provider.isSigned = true;
+                      // ShowDialogs.digitalSignatureDisplayDialog(
+                      //   context,
+                      // );
                     },
-              child: Row(
-                children: [
-                  const Text(
-                    'Aceptar',
-                    style: TextStyle(
-                      fontFamily: fontFamily,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5),
+                child: Row(
+                  children: [
+                    Text(
+                      'Enviar',
+                      style: TextStyle(
+                        fontFamily: fontFamily,
+                        color: provider.controller.isEmpty
+                            ? MyColors.iQGris1
+                            : Colors.white,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 11),
-                  SvgPicture.asset(
-                    IconsSvgRoutes.circleCheck3,
-                    color: provider.controller.isEmpty
-                        ? MyColors.iQGris1
-                        : Colors.white,
-                  ),
-                ],
+                    const SizedBox(width: 11),
+                    SvgPicture.asset(
+                      IconsSvgRoutes.circleCheck3,
+                      color: provider.controller.isEmpty
+                          ? MyColors.iQGris1
+                          : Colors.white,
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -176,11 +206,14 @@ class _Sign extends StatelessWidget {
 }
 
 class _SeeSignature extends StatelessWidget {
+  final String stockId;
+  final String token;
   final DigitalSignatureProvider provider;
   const _SeeSignature({
     required this.provider,
+    required this.stockId,
+    required this.token,
   });
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -191,7 +224,7 @@ class _SeeSignature extends StatelessWidget {
           const TextRichWith3Widget(
             text1:
                 'La siguiente firma será cargada en sistema para su utilización en las diferentes acciones dentro del sistema. ',
-            text2: '¿Estás seguro de guardar esta firma?',
+            text2: '¿Estás seguro de enviar esta firma?',
           ),
           const SizedBox(height: 44),
           Image.memory(
@@ -203,7 +236,7 @@ class _SeeSignature extends StatelessWidget {
             height: 35,
             width: 328,
             borderColor: MyColors.primary,
-            buttonColor: Colors.transparent,
+            buttonColor: Colors.white,
             child: const Text(
               'Intentar de nuevo',
               style: TextStyle(
@@ -219,19 +252,30 @@ class _SeeSignature extends StatelessWidget {
           MainButtonWidget(
             width: 328,
             child: const Text(
-              'Guardar',
+              'Enviar',
               style: TextStyle(
-                color: Color(0XFF00382B),
+                color: Colors.white,
                 fontFamily: fontFamily,
                 fontWeight: FontWeight.w500,
               ),
               textAlign: TextAlign.center,
             ),
-            onPressed: () async {
+            onPressed: () {
               provider.isLoading = true;
               print("img: ${provider.signature}");
-              await Future.delayed(Duration(seconds: 3));
-              provider.isLoading = false;
+              ApiRequest.POST
+                  .moralPersonDocument(stockId, token, data: provider.signature)
+                  .then((ApiResponse value) {
+                switch (value.status) {
+                  case 202:
+                    NavigationService.replaceTo(Flurorouter.signatureSent);
+                    break;
+                  default:
+                    NavigationService.replaceTo(Flurorouter.anErrorOcurred);
+                    break;
+                }
+                provider.isLoading = false;
+              });
             },
           ),
         ],
